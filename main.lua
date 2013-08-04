@@ -9,7 +9,6 @@ A general Game of Life Engine will be implemented too, allowing developers to ma
 ]]--
 
 
-local grid = {}
 local wd, ht = 400, 400
 
 --size of the cell
@@ -23,11 +22,12 @@ function love.load()
     love.graphics.setColor(0, 255, 0)
    
     --Use closures for inserting into drawBuffer?
-    drawBuffer = {}
+    --drawBuffer = {}
     drawX, drawY = nil, nil
     pressed = false
 
     --setup grid side length
+    grid = {}
     local N = math.pow(wd / size, 2)
 
     for i = 1, N do 
@@ -44,24 +44,45 @@ function love.draw()
 
     --fills in the cell
     if(drawX and drawY) then 
-        for k, v in ipairs(drawBuffer) do
-            love.graphics.rectangle("fill", v.x, v.y, size, size)
+        for k, v in ipairs(grid) do
+           for i, j in ipairs(v) do 
+               if(j == 1) then
+                   love.graphics.rectangle("fill", size*(k - 1), size*(i - 1),
+                   size, size)
+               end
+           end
+        
         end
     end
 
 end
 
 function love.update()
+
 end
 
 
 function love.mousepressed(x, y, button) 
     if button == "l" then
         drawX, drawY = roundForty(x, y)
-        t = {x=drawX, y=drawY}
-        table.insert(drawBuffer, t)
-    end 
+        --t = {x = drawX, y = drawY}
+        --table.insert(drawBuffer, t)
+
+        gridX = drawX / size + 1
+        gridY = drawY / size + 1
+
+        grid[gridX][gridY] = 1
+    elseif button == "r" then
+        drawX, drawY = roundForty(x, y)
+
+        gridX = drawX / size + 1
+        gridY = drawY / size + 1
+
+        grid[gridX][gridY] = 0
+    end
 end
+
+
 
 
 
@@ -85,7 +106,7 @@ function roundForty(x, y)
     y = y - ones
     for i = 0, size, 10 do
         if (y - i) % size == 0 then
-            y = y - i
+           y = y - i
             break
         end
     end
@@ -109,3 +130,4 @@ function loadGrid()
     --draws a box
     love.graphics.rectangle("line", 0, 0, 400, 400)
 end
+ 
