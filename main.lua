@@ -28,12 +28,12 @@ function love.load()
 
     --setup grid side length
     grid = {}
-    local N = math.pow(wd / size, 2)
+    N = math.pow(wd / size, 2)
 
     for i = 1, N do 
         grid[i] = {}
         for j = 1, N do
-            grid[i][j] = 0
+            grid[i][j] = false
         end
     end
 end
@@ -41,32 +41,31 @@ end
 
 function love.draw()    
     loadGrid()
-
+    
     --fills in the cell
     if(drawX and drawY) then 
         for k, v in ipairs(grid) do
            for i, j in ipairs(v) do 
-               if(j == 1) then
+               if(j) then
                    love.graphics.rectangle("fill", size*(k - 1), size*(i - 1),
                    size, size)
-               end
+               end 
            end
         
         end
     end
-
 end
 
-function love.update()
-
+function love.keypressed(key)
+    if key == "return" then
+        step()
+    end
 end
 
 
 function love.mousepressed(x, y, button) 
     if button == "l" then
         drawX, drawY = roundForty(x, y)
-        --t = {x = drawX, y = drawY}
-        --table.insert(drawBuffer, t)
 
         gridX = drawX / size + 1
         gridY = drawY / size + 1
@@ -78,12 +77,9 @@ function love.mousepressed(x, y, button)
         gridX = drawX / size + 1
         gridY = drawY / size + 1
 
-        grid[gridX][gridY] = 0
+        grid[gridX][gridY] = false
     end
 end
-
-
-
 
 
 
@@ -130,4 +126,81 @@ function loadGrid()
     --draws a box
     love.graphics.rectangle("line", 0, 0, 400, 400)
 end
- 
+
+--steps Life
+function step()
+    local tempGrid = {}
+
+    for i = 1, N do 
+        tempGrid[i] = {}
+        for j = 1, N do
+            tempGrid[i][j] = false
+        end
+    end   
+
+    for k, v in ipairs(grid) do
+        for i, j in ipairs(v) do
+            if(checkNBD(k, i)) then 
+                tempGrid[k][i] = 1
+            end
+        end
+    end
+
+    for k, v in ipairs(grid) do
+        for i, j in ipairs(v) do
+            grid[k][i] = tempGrid[k][i]
+        end
+    end
+end
+
+--scans the neighborhood
+function checkNBD(x, y)
+    local aliveCnt = 0
+    
+
+    if(x+1 <= wd and grid[x+1][y]) then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(x+1 <= wd and y - 1 > 0  and grid[x+1][y-1]) then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(y - 1 > 0 and grid[x][y-1])    then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(x - 1 > 0 and y - 1 > 0 and grid[x-1][y-1]) then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(x - 1 > 0 and grid[x-1][y])    then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(x - 1 > 0 and y + 1 <= wd and grid[x-1][y+1]) then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(y + 1 <= wd and grid[x][y+1]) then 
+        aliveCnt = aliveCnt + 1 
+    end
+    
+    if(x + 1 <= wd and y + 1 <= wd and grid[x+1][y+1]) then 
+        aliveCnt = aliveCnt + 1 
+    end
+
+    --is grid[x][y] alive or dead?
+    if(grid[x][y]) then
+        if aliveCnt == 2 or aliveCnt == 3 then
+            return true
+        else
+            return false
+        end
+    else
+        if aliveCnt == 3 then
+            return true
+        end
+    end
+end
+
