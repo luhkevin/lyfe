@@ -3,125 +3,96 @@
 --and cellular automata helper functions
 ]]--
 
---Returns draw position of the cell based on x,y coordinates
+local CF = require 'conf'
 local UT = {}
+local N = math.pow(CF.wd / CF.size, 2)
 
-UT.wd, UT.ht = 600, 600
-UT.size = 20
-UT.grid = {} 
-
-local N = math.pow(UT.wd / UT.size, 2)
 
 function UT.createGrid()
+    local newGrid = {}
     for i = 1, N do
-        UT.grid[i] = {}
+        newGrid[i] = {}
         for j = 1, N do
-            UT.grid[i][j] = false
+            newGrid[i][j] = false
         end
     end
-    return UT.grid
+    return newGrid
 end
 
-function UT.roundForty(x, y)
+--Determines which cell to fill in based on mouse position 
+function UT.cellRound(x, y)
     ones = x % 10
     x = x - ones
-    for i = 0, UT.size, 10 do
-        if (x - i)  % UT.size == 0 then 
+    for i = 0, CF.size, 10 do
+        if (x - i)  % CF.size == 0 then 
             x = x - i 
             break
-        else
         end
     end
 
     ones = y % 10
     y = y - ones
-    for i = 0, UT.size, 10 do
-        if (y - i) % UT.size == 0 then
+    for i = 0, CF.size, 10 do
+        if (y - i) % CF.size == 0 then
            y = y - i
-            break
+           break
         end
     end
 
     return x, y
 end
 
+--Draws the grid
 function UT.loadGrid()
-    --love.graphics.print('LYFE', 150, 150)
-    
-    --draws vertical lines
-    for i = 0, UT.wd, UT.size do 
-        love.graphics.line(i, 0, i, UT.wd)
+    --draws grid
+    for i = 0, CF.wd, CF.size do 
+        love.graphics.line(i, 0, i, CF.wd)
+        love.graphics.line(0, i, CF.wd, i)
     end
 
-    --draws horizontal lines
-    for j = 0, UT.wd, UT.size do
-        love.graphics.line(0, j, UT.wd, j)
-    end
-
-    --draws a box
-    love.graphics.rectangle("line", 0, 0, UT.wd, UT.ht)
+    --draws a box around the grid
+    love.graphics.rectangle("line", 0, 0, CF.wd, CF.ht)
 end
 
---steps Life
-function UT.step()
-    local tempGrid = {}
+--Steps Life
+function UT.step(currentGrid)
+    local newGrid = UT.createGrid()
 
-    for i = 1, N do 
-        tempGrid[i] = {}
-        for j = 1, N do
-            tempGrid[i][j] = false
-        end
-    end   
-
-    for k, v in ipairs(UT.grid) do
+    for k, v in ipairs(currentGrid) do
         for i, j in ipairs(v) do
-            if(checkNBD(k, i)) then 
-                tempGrid[k][i] = 1
+            if(checkNBD(k, i, currentGrid)) then 
+                newGrid[k][i] = true
             end
         end
     end
 
-    for k, v in ipairs(UT.grid) do
-        for i, j in ipairs(v) do
-            UT.grid[k][i] = tempGrid[k][i]
-        end
-    end
+    return newGrid
 end
 
---scans the neighborhood
-function checkNBD(x, y)
-    local aliveCnt = 0
-    
 
-    if(x+1 <= UT.wd and grid[x+1][y]) then 
+--Scans the neighborhood
+function checkNBD(x, y, grid)
+    local aliveCnt = 0
+   
+    --checks neighborhood of 8 squares
+    if(x+1 <= CF.wd and grid[x+1][y]) then aliveCnt = aliveCnt + 1 end 
+    if(y - 1 > 0 and grid[x][y-1]) then aliveCnt = aliveCnt + 1 end 
+    if(x - 1 > 0 and grid[x-1][y]) then aliveCnt = aliveCnt + 1 end
+    if(y + 1 <= CF.wd and grid[x][y+1]) then aliveCnt = aliveCnt + 1 end 
+
+    if(x+1 <= CF.wd and y - 1 > 0 and grid[x+1][y-1]) then 
         aliveCnt = aliveCnt + 1 
     end
-    
-    if(x+1 <= UT.wd and y - 1 > 0  and grid[x+1][y-1]) then 
-        aliveCnt = aliveCnt + 1 
-    end
-    
-    if(y - 1 > 0 and grid[x][y-1])    then 
-        aliveCnt = aliveCnt + 1 
-    end
-    
+        
     if(x - 1 > 0 and y - 1 > 0 and grid[x-1][y-1]) then 
         aliveCnt = aliveCnt + 1 
-    end
-    
-    if(x - 1 > 0 and grid[x-1][y])    then 
+    end 
+       
+    if(x - 1 > 0 and y + 1 <= CF.wd and grid[x-1][y+1]) then 
         aliveCnt = aliveCnt + 1 
     end
-    
-    if(x - 1 > 0 and y + 1 <= UT.wd and grid[x-1][y+1]) then 
-        aliveCnt = aliveCnt + 1 
-    end
-    
-    if(y + 1 <= UT.wd and grid[x][y+1]) then 
-        aliveCnt = aliveCnt + 1 
-    end
-    
-    if(x + 1 <= UT.wd and y + 1 <= UT.wd and grid[x+1][y+1]) then 
+      
+    if(x + 1 <= CF.wd and y + 1 <= CF.wd and grid[x+1][y+1]) then 
         aliveCnt = aliveCnt + 1 
     end
 

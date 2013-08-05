@@ -1,32 +1,30 @@
 --[[
 --Game of Life Engine and Game
+--A Game of Life simulator and implementation of "Immigration": Two player Game of Life, each trying
+--to capture the most space.
 
-A Game of Life simulator and implementation of "Immigration": Two player Game of Life, each trying
-to capture the most space.
-
-A general Game of Life Engine will be implemented too, allowing developers to make their own games
-
+--A general Game of Life Engine will be implemented too, allowing developers to make their own games
 ]]--
 
 local util = require 'util'
-local colorCnt = 0
+local CF = require 'conf'
 
 function love.load()
-    love.graphics.setMode(util.wd, util.ht, false, true)
-
+    love.graphics.setMode(CF.wd, CF.ht, false, true)
     love.graphics.setLineStyle("smooth")
     love.graphics.setColor(0, 255, 0)
     love.keyboard.setKeyRepeat(0.01, 0.25) 
     
+    colorCnt = 0
     drawX, drawY = nil, nil
-    pressed = false
 
-    --setup grid side length
+    --create the grid
     grid = util.createGrid()
 end
 
 
 function love.draw()    
+    --draw Grid
     util.loadGrid()
     
     --fills in the cell
@@ -34,8 +32,8 @@ function love.draw()
         for k, v in ipairs(grid) do
            for i, j in ipairs(v) do 
                if(j) then
-                   love.graphics.rectangle("fill", util.size*(k - 1), util.size*(i - 1),
-                   util.size, util.size)
+                   love.graphics.rectangle("fill", CF.size*(k - 1), CF.size*(i - 1),
+                   CF.size, CF.size)
                end 
            end
         
@@ -44,19 +42,9 @@ function love.draw()
 
 end
 
-function love.update(dt)
-    if colorCnt == 0 then 
-        love.graphics.setColor(0, 255, 0)
-    elseif colorCnt == 1 then
-        love.graphics.setColor(255, 0, 0)
-    else
-        love.graphics.setColor(0, 0, 255)
-    end
-end
-
 function love.keypressed(key)
     if key == "return" then
-        util.step()
+        grid = util.step(grid)
     end
 
     if key == "escape" then
@@ -69,6 +57,8 @@ function love.keypressed(key)
 
     if key == 'tab' then
         colorCnt = (colorCnt  + 1) % 3  
+        CF.changeColor(colorCnt)
+        love.graphics.setColor(CF.color.r, CF.color.g, CF.color.b)
     end
 
 end
@@ -76,18 +66,18 @@ end
 
 function love.mousepressed(x, y, button) 
     if button == "l" then
-        drawX, drawY = util.roundForty(x, y)
+        drawX, drawY = util.cellRound(x, y)
 
-        gridX = drawX / util.size + 1
-        gridY = drawY / util.size + 1
+        gridX = drawX / CF.size + 1
+        gridY = drawY / CF.size + 1
 
-        grid[gridX][gridY] = 1
+        grid[gridX][gridY] = true
 
     elseif button == "r" then
-        drawX, drawY = util.roundForty(x, y)
+        drawX, drawY = util.cellRound(x, y)
 
-        gridX = drawX / util.size + 1
-        gridY = drawY / util.size + 1
+        gridX = drawX / CF.size + 1
+        gridY = drawY / CF.size + 1
 
         grid[gridX][gridY] = false
     end
