@@ -34,11 +34,11 @@ local UT = {}
 local N = math.pow(CF.wd / CF.size, 2)
 
 
-function UT.createGrid()
+function UT.createGrid(x, y, wd, ht)
     local newGrid = {}
-    for i = 1, N do
+    for i = x or 1, wd or N do
         newGrid[i] = {}
-        for j = 1, N do
+        for j = y or 1, ht or N do
             newGrid[i][j] = nil
         end
     end
@@ -83,7 +83,6 @@ end
 
 --Steps Life
 function UT.step(currentGrid)
-    local newGrid = UT.createGrid()
     local minX, minY = CF.wd + 1, CF.wd + 1
     local maxX, maxY = 0, 0
 
@@ -116,7 +115,9 @@ function UT.step(currentGrid)
     end
         
     --Step
+    local newGrid = {}
     for k, v in pairs(currentGrid) do
+        newGrid[k] = {}
         for i, j in pairs(v) do
             if(checkNBD(k, i, currentGrid)) then 
                 newGrid[k][i] = 1

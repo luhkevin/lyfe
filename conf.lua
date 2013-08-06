@@ -25,7 +25,7 @@ THE SOFTWARE.
 ]]--
 
 local CF = {
-    wd = 400, ht = 400,
+    wd = 800, ht = 800,
     size = 10,
     color = {r = 0, g = 255, b = 0},
     delay = 0.1,
