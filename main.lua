@@ -24,6 +24,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]--
 
+--TODO:Next step...remove createGrid() in load 
+--and create the grid dynamically
+
 local util = require 'util'
 local CF = require 'conf'
 

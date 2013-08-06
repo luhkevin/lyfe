@@ -24,11 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]--
 
-
---TODO:BOUNDING BOX in checkNBD so that cells are dynamically allocated
---memory (i.e. 'false' instead of nil) as cell selection increases outward
-
-
 local CF = require 'conf'
 local UT = {}
 local N = math.pow(CF.wd / CF.size, 2)
