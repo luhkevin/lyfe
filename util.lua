@@ -80,10 +80,42 @@ function UT.loadGrid()
     love.graphics.rectangle("line", 0, 0, CF.wd, CF.ht)
 end
 
+
 --Steps Life
 function UT.step(currentGrid)
     local newGrid = UT.createGrid()
+    local minX, minY = CF.wd + 1, CF.wd + 1
+    local maxX, maxY = 0, 0
 
+    --Find the box surrounding all alive cells
+    for k, v in pairs(currentGrid) do
+        for i, j in pairs(v) do
+            if k <= minX then minX = k end
+            if i <= minY then minY = i end
+            if k >= maxX then maxX = k end
+            if i >= maxY then maxY = i end
+        end
+    end
+ 
+    minX, minY = minX - 1, minY - 1
+    maxX, maxY = maxX + 1, maxY + 1
+   
+    if minX < 0 then minX = 0 end
+    if minY < 0 then minY = 0 end
+    if maxX > CF.wd then maxX = CF.wd end
+    if maxY > CF.ht then maxY = CF.ht end
+
+    --Allocate values for everything in the box
+    for i = minX, maxX do
+        for j = minY, maxY do
+            if(not currentGrid[i][j]) then
+                currentGrid[i][j] = false
+            end
+        end
+
+    end
+        
+    --Step
     for k, v in pairs(currentGrid) do
         for i, j in pairs(v) do
             if(checkNBD(k, i, currentGrid)) then 

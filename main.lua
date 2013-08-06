@@ -35,6 +35,7 @@ function love.load()
     
     colorCnt = 0
     drawX, drawY = nil, nil
+    gridX, gridY = nil, nil
 
     --create the grid
     grid = util.createGrid()
@@ -90,7 +91,8 @@ function love.mousepressed(x, y, button)
         gridY = drawY / CF.size + 1
 
         grid[gridX][gridY] = 1
-
+        
+        print("X: " .. gridX .. " Y: " .. gridY)
     elseif button == "r" then
         drawX, drawY = util.cellRound(x, y)
 
