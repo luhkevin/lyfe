@@ -24,6 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]--
 
+
+--TODO:BOUNDING BOX in checkNBD so that cells are dynamically allocated
+--memory (i.e. 'false' instead of nil) as cell selection increases outward
+
+
 local CF = require 'conf'
 local UT = {}
 local N = math.pow(CF.wd / CF.size, 2)
@@ -34,7 +39,7 @@ function UT.createGrid()
     for i = 1, N do
         newGrid[i] = {}
         for j = 1, N do
-            newGrid[i][j] = false
+            newGrid[i][j] = nil
         end
     end
     return newGrid
@@ -79,14 +84,15 @@ end
 function UT.step(currentGrid)
     local newGrid = UT.createGrid()
 
-    for k, v in ipairs(currentGrid) do
-        for i, j in ipairs(v) do
+    for k, v in pairs(currentGrid) do
+        for i, j in pairs(v) do
             if(checkNBD(k, i, currentGrid)) then 
-                newGrid[k][i] = true
+                newGrid[k][i] = 1
             end
         end
     end
 
+    currentGrid = nil
     return newGrid
 end
 
@@ -131,11 +137,11 @@ function checkNBD(x, y, grid)
     end
 end
 
-function UT.clear()
+function UT.clear(grid)
     for i = 1, N do 
         grid[i] = {}
         for j = 1, N do
-            grid[i][j] = false
+            grid[i][j] = nil
         end
     end
 end

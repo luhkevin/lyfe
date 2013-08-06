@@ -31,7 +31,7 @@ function love.load()
     love.graphics.setMode(CF.wd, CF.ht, false, true)
     love.graphics.setLineStyle("smooth")
     love.graphics.setColor(0, 255, 0)
-    love.keyboard.setKeyRepeat(0.01, 0.25) 
+    love.keyboard.setKeyRepeat(0.01, CF.delay) 
     
     colorCnt = 0
     drawX, drawY = nil, nil
@@ -47,8 +47,8 @@ function love.draw()
     
     --fills in the cell
     if(drawX and drawY) then 
-        for k, v in ipairs(grid) do
-           for i, j in ipairs(v) do 
+        for k, v in pairs(grid) do
+           for i, j in pairs(v) do 
                if(j) then
                    love.graphics.rectangle("fill", CF.size*(k - 1), CF.size*(i - 1),
                    CF.size, CF.size)
@@ -61,12 +61,12 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == "return" then
+    if key == "return" or key == " " then
         grid = util.step(grid)
     end
 
-    if key == "escape" then
-        util.clear()
+    if key == "c" then
+        util.clear(grid)
     end
 
     if key == 'q' then
@@ -89,7 +89,7 @@ function love.mousepressed(x, y, button)
         gridX = drawX / CF.size + 1
         gridY = drawY / CF.size + 1
 
-        grid[gridX][gridY] = true
+        grid[gridX][gridY] = 1
 
     elseif button == "r" then
         drawX, drawY = util.cellRound(x, y)
@@ -97,6 +97,6 @@ function love.mousepressed(x, y, button)
         gridX = drawX / CF.size + 1
         gridY = drawY / CF.size + 1
 
-        grid[gridX][gridY] = false
+        grid[gridX][gridY] = nil
     end
 end

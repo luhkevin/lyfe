@@ -26,9 +26,9 @@ THE SOFTWARE.
 
 local CF = {
     wd = 400, ht = 400,
-    size = 20,
+    size = 10,
     color = {r = 0, g = 255, b = 0},
-    delay = 0.2,
+    delay = 0.1,
     autosize = false,
     autostep = false 
 }
