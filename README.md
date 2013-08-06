@@ -1,8 +1,15 @@
 lyfe
 ====
 
-A Game of Life simulator, with game modes (tetris, 2-player Life) to be added
+A Game of Life simulator, with game modes to be added
 -----------------------------------------------------------------------------
+
+Installation
+------------
+You must have the Love2D engine installed to run lyfe.
+
+After it's installed, run "love lyfe" outside the lyfe directory.
+
 
 
 Controls
