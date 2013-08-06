@@ -32,7 +32,9 @@ function love.load()
     love.graphics.setLineStyle("smooth")
     love.graphics.setColor(0, 255, 0)
     love.keyboard.setKeyRepeat(0.01, CF.delay) 
-    
+
+    stepped = false
+    selectBuf = {}
     colorCnt = 0
     drawX, drawY = nil, nil
     gridX, gridY = nil, nil
@@ -63,11 +65,17 @@ end
 
 function love.keypressed(key)
     if key == "return" or key == " " then
+        stepped = true
         grid = util.step(grid)
     end
 
-    if key == "c" then
+    if key == "c" and (not stepped) then
+        for k,v in pairs(selectBuf) do
+           grid[v.x][v.y] = nil 
+        end
+    elseif key == "c" then
         util.clear(grid)
+        stepped = false
     end
 
     if key == 'q' then
@@ -91,8 +99,11 @@ function love.mousepressed(x, y, button)
         gridY = drawY / CF.size + 1
 
         grid[gridX][gridY] = 1
-        
-        print("X: " .. gridX .. " Y: " .. gridY)
+
+        if(not stepped) then 
+            selectBuf[#selectBuf + 1] = {x = gridX, y = gridY}
+        end
+   
     elseif button == "r" then
         drawX, drawY = util.cellRound(x, y)
 

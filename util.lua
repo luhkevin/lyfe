@@ -32,7 +32,8 @@ THE SOFTWARE.
 local CF = require 'conf'
 local UT = {}
 local N = math.pow(CF.wd / CF.size, 2)
-
+local minX, minY = CF.wd + 1, CF.ht + 1
+local maxX, maxY = 0, 0
 
 function UT.createGrid(x, y, wd, ht)
     local newGrid = {}
@@ -83,9 +84,6 @@ end
 
 --Steps Life
 function UT.step(currentGrid)
-    local minX, minY = CF.wd + 1, CF.wd + 1
-    local maxX, maxY = 0, 0
-
     --Find the box surrounding all alive cells
     for k, v in pairs(currentGrid) do
         for i, j in pairs(v) do
@@ -171,9 +169,9 @@ function checkNBD(x, y, grid)
 end
 
 function UT.clear(grid)
-    for i = 1, N do 
+    for i = 1, maxX or N do 
         grid[i] = {}
-        for j = 1, N do
+        for j = 1, maxY or N do
             grid[i][j] = nil
         end
     end
